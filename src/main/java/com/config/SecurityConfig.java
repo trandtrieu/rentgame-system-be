@@ -23,11 +23,7 @@ import com.service.CustomUserDetailsService;
 @EnableWebSecurity
 public class SecurityConfig {
 
-//	@Bean
-//	CorsFilter corsFilter() {
-//		CorsFilter filter = new CorsFilter();
-//		return filter;
-//	}
+
 
 	@Bean
 	public UserDetailsService userDetailsService() {
@@ -47,33 +43,7 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http.csrf(csrf -> csrf.disable())
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/pharmacy-online/products",
-						"/pharmacy-online/admin/products/**",
-						"/pharmacy-online/admin/prescriptions/**",
-						"/pharmacy-online/admin/category/**",
-						"/pharmacy-online/admin/cart/**",
-						"/pharmacy-online/admin/discount-code/**",
-						"/pharmacy-online/admin/order/**",
-
-"pharmacy-online/products/filter/rangefilt04",
-						"/pharmacy-online/products/**", 
-						"/pharmacy-online/products/filterByCategory", 
-
-						"/pharmacy-online/products/filter/**", 
-						"/pharmacy-online/admin/account/**",
-
-						"/pharmacy-online/product/**",
-						"/pharmacy-online/blog/**",
-						"/pharmacy-online/blogs/**", 
-						"/pharmacy-online/feedback/*",
-
-						"/pharmacy-online/cart/remove-from-cart", "/pharmacy-online/cart/clear-cart",
-						"/pharmacy-online/cart/update-cart", "pharmacy-online/discount-code/**",
-						"/pharmacy-online/prescriptions/delete/{prescriptionId}",
-						"/pharmacy-online/prescriptions/view/{prescriptionId}",
-						"/pharmacy-online/prescriptions/update/{prescriptionId}",
-						"/pharmacy-online/reply/byFeedbackId/{feedbackId}", "/pharmacy-online/product/feedback/**",
-						"/pharmacy-online/category/*", "/un-auth/welcome", "/auth/register", "/auth/token",
+				.authorizeHttpRequests(auth -> auth.requestMatchers("/un-auth/welcome", "/auth/register", "/auth/token",
 						"/auth/forgot-password", "/auth/set-password").permitAll()
 						.anyRequest().authenticated())
 				.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
