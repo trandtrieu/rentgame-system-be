@@ -5,13 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class GameDTO {
-
-
     private long id;
     private String name;
     private String date_released;
@@ -24,5 +24,6 @@ public class GameDTO {
     private int rating;
     private String imageUrls;
     private String videoUrls;
+    private List<String> categories;
 
 }
