@@ -18,23 +18,16 @@ public class EmailUtil {
 		MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
 		mimeMessageHelper.setTo(mail);
 		mimeMessageHelper.setSubject("Set Password");
-		mimeMessageHelper.setText(
-				"""
-												<div>
-													<p>Your password reset request was successful</p>
-													<p>Please Click on the following link to change your password</p>
-												  <a href="http://localhost:3000/setnewpass?email=%s" target="_blank">Click link to set password</a>
-												</div>
-												"""
-						.formatted(mail),true);
+		mimeMessageHelper.setText("""
+				<div>
+					<p>Your password reset request was successful</p>
+					<p>Please Click on the following link to change your password</p>
+				  <a href="http://localhost:3000/setnewpass?email=%s" target="_blank">Click link to set password</a>
+				</div>
+				""".formatted(mail), true);
 
 		javaMailSender.send(mimeMessage);
-		
-		
-		
-		
-	}
-	
 
+	}
 
 }
