@@ -65,4 +65,8 @@ public class GameService {
         gameDTO.setCategories(categories);
         return gameDTO;
     }
+
+    public Game getProductById(Long gameId) {
+        return gameRepository.findById(gameId).orElse(null);
+    }
 }

@@ -42,7 +42,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/rent-game/games/**", "/un-auth/welcome", "/auth/register", "/auth/token",
-                                "/auth/forgot-password", "/auth/set-password").permitAll()
+                                "/auth/forgot-password", "/rent-game/game/feedback/**", "/rent-game/game/reply/getByFeedbackId/**", "/auth/set-password").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
