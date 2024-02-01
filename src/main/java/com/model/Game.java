@@ -26,7 +26,7 @@ public class Game {
     private String name;
 
     @Column
-    private String date_released;
+    private String dateReleased;
 
     @Column
     private String describe;

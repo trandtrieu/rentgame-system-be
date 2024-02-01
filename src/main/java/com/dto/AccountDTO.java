@@ -1,10 +1,6 @@
 package com.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Data
 @Getter
@@ -13,26 +9,27 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AccountDTO {
 
-	private long id;
+    private long id;
 
-	private String name;
+    private String name;
 
-	private String mail;
+    private String mail;
 
-	private String username;
+    private String username;
 
-	private String password;
+    private String password;
 
-	private String address;
+    private String address;
 
-	private String dob;
+    private String dob;
 
-	private String avatar;
+    private String avatar;
 
-	private String phone;
+    private String phone;
 
-	private String roles;
+    private String roles;
 
-	private int status;
+    private int status;
+    private long account_balance;
 
 }

@@ -14,7 +14,7 @@ import java.util.List;
 public class GameDTO {
     private long id;
     private String name;
-    private String date_released;
+    private String dateReleased;
     private String describe;
     private String price;
     private String age_limit;
@@ -22,8 +22,8 @@ public class GameDTO {
     private String stock;
     private String note;
     private int rating;
-    private String imageUrls;
-    private String videoUrls;
+    private List<String> imageUrls;
+    private List<String> videoUrls;
     private List<String> categories;
 
 }
