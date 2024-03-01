@@ -97,9 +97,12 @@ public class ReplyController {
             ReplyDTO.setUser_name(reply.getAccount().getUsername());
             reply.setFeedback(feedbackRepository.findById(ReplyDTO.getFeedback_id()).orElse(null));
             replyRepository.save(reply);
+        }else{
+            return new ResponseEntity<>("Feedback not found", HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(ReplyDTO, HttpStatus.CREATED);
+//        return new ResponseEntity<>(ReplyDTO, HttpStatus.CREATED);
+        return new ResponseEntity<>("Reply added successfully", HttpStatus.OK);
     }
 
 }

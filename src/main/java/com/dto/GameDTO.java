@@ -21,9 +21,9 @@ public class GameDTO {
     private String platform;
     private String stock;
     private String note;
-    private int rating;
-    private String imageUrls;
-    private String videoUrls;
+    private double rating;
+    private List<String> imageUrls;
+    private List<String> videoUrls;
     private List<String> categories;
 
 }

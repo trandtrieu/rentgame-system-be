@@ -128,35 +128,35 @@ public class FeedbackController {
     }
 //
 //    // calculate average rating
-//    @GetMapping("/averageRating/{productId}")
-//    public double getAverageRating(@PathVariable Integer productId) {
-//        double average = 0;
-//        Product product = productService.getProductById(productId);
-//        if (product != null) {
-//            List<Feedback> feedbacks = product.getFeedbackList();
-//            int total = feedbacks.size();
-//            if (total > 0) {
-//                double totalRating = 0;
-//
-//                for (Feedback feedback : feedbacks) {
-//                    totalRating += feedback.getRating();
-//                }
-//
-//                average = ((double) Math.round((totalRating / total) * 10) / 10);
-//            }
-//        }
-//
-//        return average;
-//    }
+    @GetMapping("/averageRating/{GameId}")
+    public double getAverageRating(@PathVariable long GameId) {
+        double average = 0;
+        Game game = gameService.getProductById(GameId);
+        if (game != null) {
+            List<Feedback> feedbacks = game.getFeedbackList();
+            int total = feedbacks.size();
+            if (total > 0) {
+                double totalRating = 0;
+
+                for (Feedback feedback : feedbacks) {
+                    totalRating += feedback.getRating();
+                }
+
+                average = ((double) Math.round((totalRating / total) * 10) / 10);
+            }
+        }
+
+        return average;
+    }
 
     //
-//    @GetMapping("/{productId}/{rating}")
-//    public int getTotalFeedbackByRating(@PathVariable int productId, @PathVariable int rating) {
-//        return feedbackRepository.countByRatingAndProductId(rating, productId);
-//    }
+    @GetMapping("/{gameId}/{rating}")
+    public int getTotalFeedbackByRating(@PathVariable long gameId, @PathVariable long rating) {
+        return feedbackRepository.countByRatingAndProductId(rating, gameId);
+    }
 //
-//    @GetMapping("/{productId}/countFeedback")
-//    public int countFeedbacksByProductId(@PathVariable int productId) {
-//        return feedbackRepository.countFeedbacksByProductId(productId);
-//    }
+    @GetMapping("/{gameId}/countFeedback")
+    public int countFeedbacksByProductId(@PathVariable long gameId) {
+        return feedbackRepository.countFeedbacksByProductId(gameId);
+    }
 }
