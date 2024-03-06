@@ -44,8 +44,9 @@ public class GameService {
         gameDTO.setDescribe(game.getDescribe());
         gameDTO.setDate_released(game.getDate_released());
 
-        gameDTO.setRating(game.getRating());
-        gameDTO.setRating(game.getRating());
+        double averageRating = calculateAverageRatingForGame(game);
+        gameDTO.setRating(averageRating);
+
         gameDTO.setPlatform(game.getPlatform());
         gameDTO.setAge_limit(game.getAge_limit());
         gameDTO.setNote(game.getNote());
@@ -69,6 +70,26 @@ public class GameService {
         gameDTO.setCategories(categories);
         return gameDTO;
     }
+
+    public double calculateAverageRatingForGame(Game game) {
+        List<Feedback> feedbacks = game.getFeedbackList();
+        if (feedbacks == null || feedbacks.isEmpty()) {
+            return 0.0;
+        }
+
+        int totalRating = 0;
+        for (Feedback feedback : feedbacks) {
+            totalRating += feedback.getRating();
+        }
+
+        double averageRating = (double) totalRating / feedbacks.size();
+
+        // Làm tròn số về 1 chữ số thập phân
+        double roundedAverageRating = Math.round(averageRating * 10.0) / 10.0;
+
+        return roundedAverageRating;
+    }
+
 
 
     public Game getProductById(Long gameId) {

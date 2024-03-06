@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class FeedbackDTO {
     private long feedback_id;
-    private int rating;
+    private double rating;
     private String comment;
     private String created_at_time;
     private LocalDate created_date;

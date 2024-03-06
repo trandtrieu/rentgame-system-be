@@ -1,10 +1,6 @@
 package com.controller;
 
 import com.dto.GameDTO;
-import com.model.Category;
-import com.model.Game;
-import com.model.Game_image;
-import com.model.Game_video;
 import com.repository.CategoryRepository;
 import com.repository.GameImageRepository;
 import com.repository.GameRepository;
@@ -15,11 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.stream.Collectors;
+import java.util.*;
 
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -56,6 +48,25 @@ public class GameController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/random")
+    public List<GameDTO> getRandomGames() {
+        List<GameDTO> allGames = gameService.getAllGames();
+        Set<Integer> chosenIndices = new HashSet<>();
+        List<GameDTO> randomGames = new ArrayList<>();
+        Random random = new Random();
+
+        while (randomGames.size() < 3) {
+            int randomIndex = random.nextInt(allGames.size());
+            if (!chosenIndices.contains(randomIndex)) {
+                randomGames.add(allGames.get(randomIndex));
+                chosenIndices.add(randomIndex);
+            }
+        }
+
+        return randomGames;
+    }
+
 
 
 

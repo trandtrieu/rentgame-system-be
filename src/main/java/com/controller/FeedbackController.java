@@ -149,6 +149,26 @@ public class FeedbackController {
         return average;
     }
 
+    public double AverageRating( long GameId) {
+        double average = 0;
+        Game game = gameService.getProductById(GameId);
+        if (game != null) {
+            List<Feedback> feedbacks = game.getFeedbackList();
+            int total = feedbacks.size();
+            if (total > 0) {
+                double totalRating = 0;
+
+                for (Feedback feedback : feedbacks) {
+                    totalRating += feedback.getRating();
+                }
+
+                average = ((double) Math.round((totalRating / total) * 10) / 10);
+            }
+        }
+
+        return average;
+    }
+
     //
     @GetMapping("/{gameId}/{rating}")
     public int getTotalFeedbackByRating(@PathVariable long gameId, @PathVariable long rating) {

@@ -47,8 +47,8 @@ public class Game {
     @Column
     private String note;
 
-    @Column
-    private int rating;
+//    @Column
+//    private int rating;
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
     private List<Game_image> images = new ArrayList<>();

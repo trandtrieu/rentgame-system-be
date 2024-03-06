@@ -22,7 +22,7 @@ public class Feedback {
 
 
     @Column(name = "rating")
-    private int rating;
+    private double rating;
 
     @Column(name = "comment", columnDefinition = "nvarchar(max)")
     private String comment;
