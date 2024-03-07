@@ -20,7 +20,7 @@ public class GameDTO {
     private String ageLimit;
     private String stock;
     private String note;
-    private int rating;
+    private double rating;
     private List<String> imageUrls;
     private List<String> videoUrls;
     private List<String> categories;

@@ -1,5 +1,6 @@
 package com.service;
 
+import com.controller.FeedbackController;
 import com.dto.GameDTO;
 import com.model.*;
 import com.repository.GameImageRepository;
@@ -64,13 +65,15 @@ public class GameService {
     private GameDTO convertToDTO(Game game) {
 
         GameDTO gameDTO = new GameDTO();
+        FeedbackController feedbackController = new FeedbackController();
         gameDTO.setId(game.getId());
         gameDTO.setName(game.getName());
         gameDTO.setDescribe(game.getDescribe());
         gameDTO.setDateReleased(game.getDateReleased());
         gameDTO.setAgeLimit(game.getAgeLimit());
-        gameDTO.setRating(game.getRating());
-
+        gameDTO.setNote(game.getNote());
+        double averageRating = calculateAverageRatingForGame(game);
+        gameDTO.setRating(averageRating);
         gameDTO.setNote(game.getNote());
         gameDTO.setPrice(game.getPrice());
         gameDTO.setStock(game.getStock());
@@ -96,8 +99,33 @@ public class GameService {
         return gameDTO;
     }
 
+
     public List<String> getAllGameNames() {
         List<Game> games = gameRepository.findAll();
         return games.stream().map(Game::getName).collect(Collectors.toList());
+    }
+
+    public double calculateAverageRatingForGame(Game game) {
+        List<Feedback> feedbacks = game.getFeedbackList();
+        if (feedbacks == null || feedbacks.isEmpty()) {
+            return 0.0;
+        }
+
+        int totalRating = 0;
+        for (Feedback feedback : feedbacks) {
+            totalRating += feedback.getRating();
+        }
+
+        double averageRating = (double) totalRating / feedbacks.size();
+
+        // Làm tròn số về 1 chữ số thập phân
+        double roundedAverageRating = Math.round(averageRating * 10.0) / 10.0;
+
+        return roundedAverageRating;
+    }
+
+
+    public Game getProductById(Long gameId) {
+        return gameRepository.findById(gameId).orElse(null);
     }
 }

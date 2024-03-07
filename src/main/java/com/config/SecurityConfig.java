@@ -41,6 +41,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(csrf -> csrf.disable())
+
                 .authorizeHttpRequests(auth -> auth.requestMatchers(
                                 "/rent-game/games",
                                 "/rent-game/games/**",
@@ -50,7 +51,12 @@ public class SecurityConfig {
                                 "rent-game/platform/**",
                                 "/un-auth/welcome",
                                 "/auth/register", "/auth/token",
+                                "/rent-game/game/feedback/**",
+                                "/rent-game/game/feedback/getFeedback/**",
+                                "/rent-game/game/reply/getByFeedbackId/**",
+
                                 "/auth/forgot-password", "/auth/set-password").permitAll()
+
                         .anyRequest().authenticated())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())

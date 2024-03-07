@@ -14,7 +14,7 @@ public class ReplyDTO {
     private String reply_feedback;
     private String created_at_time;
     private LocalDate created_date;
-    private int feedback_id;
+    private long feedback_id;
     private long user_id;
     private String user_name;
     private String avatar;

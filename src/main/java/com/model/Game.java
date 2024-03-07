@@ -1,6 +1,7 @@
 package com.model;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -44,8 +45,6 @@ public class Game {
     @Column
     private String note;
 
-    @Column
-    private int rating;
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
     private List<Game_image> images = new ArrayList<>();
@@ -61,6 +60,7 @@ public class Game {
     )
     private List<Category> categories = new ArrayList<>();
 
+
     @ManyToMany
     @JoinTable(
             name = "game_platform",
@@ -68,4 +68,9 @@ public class Game {
             inverseJoinColumns = @JoinColumn(name = "platform_id")
     )
     private List<Platform> platforms = new ArrayList<>();
+
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Feedback> feedbackList;
+
 }

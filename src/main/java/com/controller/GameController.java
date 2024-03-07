@@ -1,6 +1,10 @@
 package com.controller;
 
 import com.dto.GameDTO;
+import com.repository.CategoryRepository;
+import com.repository.GameImageRepository;
+import com.repository.GameRepository;
+import com.repository.GameVideoRepository;
 import com.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +22,18 @@ import java.util.*;
 public class GameController {
     @Autowired
     private GameService gameService;
+
+    @Autowired
+    private GameRepository gameRepository;
+
+    @Autowired
+    private GameImageRepository gameImageRepository;
+
+    @Autowired
+    private GameVideoRepository gameVideoRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @GetMapping("/home")
     public List<GameDTO> getAllGames() {
@@ -81,4 +97,24 @@ public class GameController {
 
         return result;
     }
+
+    @GetMapping("/random")
+    public List<GameDTO> getRandomGames() {
+        List<GameDTO> allGames = gameService.getAllGamesHome();
+        Set<Integer> chosenIndices = new HashSet<>();
+        List<GameDTO> randomGames = new ArrayList<>();
+        Random random = new Random();
+
+        while (randomGames.size() < 3) {
+            int randomIndex = random.nextInt(allGames.size());
+            if (!chosenIndices.contains(randomIndex)) {
+                randomGames.add(allGames.get(randomIndex));
+                chosenIndices.add(randomIndex);
+            }
+        }
+
+        return randomGames;
+    }
+
+
 }
