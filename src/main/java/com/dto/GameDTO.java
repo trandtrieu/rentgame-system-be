@@ -16,14 +16,15 @@ public class GameDTO {
     private String name;
     private String dateReleased;
     private String describe;
-    private String price;
-    private String age_limit;
-    private String platform;
+    private Double price;
+    private String ageLimit;
     private String stock;
     private String note;
     private int rating;
     private List<String> imageUrls;
     private List<String> videoUrls;
     private List<String> categories;
+    private List<String> platforms;
+
 
 }

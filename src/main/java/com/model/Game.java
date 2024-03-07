@@ -32,13 +32,11 @@ public class Game {
     private String describe;
 
     @Column
-    private String price;
+    private Double price;
 
     @Column
-    private String age_limit;
+    private String ageLimit;
 
-    @Column
-    private String platform;
 
     @Column
     private String stock;
@@ -62,4 +60,12 @@ public class Game {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private List<Category> categories = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "game_platform",
+            joinColumns = @JoinColumn(name = "game_id"),
+            inverseJoinColumns = @JoinColumn(name = "platform_id")
+    )
+    private List<Platform> platforms = new ArrayList<>();
 }

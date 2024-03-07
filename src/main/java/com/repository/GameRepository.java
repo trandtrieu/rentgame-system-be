@@ -3,6 +3,7 @@ package com.repository;
 import com.model.Game;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;
@@ -12,22 +13,25 @@ public interface GameRepository extends PagingAndSortingRepository<Game, Long> {
 
     Optional<Game> findById(long gameId);
 
-    Page<Game> findAllByOrderByDateReleasedDesc(Pageable pageable);
-
-    Page<Game> findAllByOrderByDateReleasedAsc(Pageable pageable);
 
     List<Game> findAll();
 
-    Page<Game> findByCategories_Id(long categoryId, Pageable pageable);
 
-    // Trong GameRepository interface
-    Page<Game> findByCategories_IdAndDateReleased(Long categoryId, String dateRelease, Pageable pageable);
+    @Query("SELECT g FROM Game g " +
+            "LEFT JOIN g.categories c " +
+            "LEFT JOIN g.platforms p " +
+            "WHERE " +
+            "(COALESCE(:keyword, '') = '' OR " +
+            "g.name LIKE %:keyword% OR " +
+            "g.describe LIKE %:keyword%) AND " +
 
-    // Trong GameRepository interface
-    Page<Game> findByDateReleased(String dateRelease, Pageable pageable);
+            "(:categoryIds IS NULL OR c.id IN :categoryIds) AND " +
+            "(:platformIds IS NULL OR p.id IN :platformIds) " +
+            "ORDER BY CASE WHEN :sortType = 'desc' THEN g.price END DESC, " +
+            "CASE WHEN :sortType = 'asc' THEN g.price END ASC")
+    Page<Game> searchAndFilter(String keyword, List<Long> categoryIds, List<Long> platformIds, String sortType, Pageable pageable);
 
-    Page<Game> findByNameContainingIgnoreCaseOrDescribeContainingIgnoreCase(String name, String describe, Pageable pageable);
+    Page<Game> findAllByOrderByPriceDesc(Pageable pageable);
 
-    Page<Game> findByNameContainingIgnoreCaseOrCategories_NameContainingIgnoreCaseOrDateReleasedContainingIgnoreCase(String name, String category, String dateRelease, Pageable pageable);
-
+    Page<Game> findAllByOrderByPriceAsc(Pageable pageable);
 }

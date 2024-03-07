@@ -47,6 +47,7 @@ public class SecurityConfig {
                                 "/rent-game/games/oldest",
                                 "/rent-game/account/top3",
                                 "rent-game/category/**",
+                                "rent-game/platform/**",
                                 "/un-auth/welcome",
                                 "/auth/register", "/auth/token",
                                 "/auth/forgot-password", "/auth/set-password").permitAll()
