@@ -52,6 +52,8 @@ public class SecurityConfig {
                                 "/un-auth/welcome",
                                 "/auth/register", "/auth/token",
                                 "/rent-game/game/feedback/**",
+                                "/rent-game/wishlist/**",
+
                                 "/rent-game/game/feedback/getFeedback/**",
                                 "/rent-game/game/reply/getByFeedbackId/**",
 

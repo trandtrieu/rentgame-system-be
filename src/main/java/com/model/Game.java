@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,13 +40,11 @@ public class Game {
     @Column
     private String ageLimit;
 
-
     @Column
     private String stock;
 
     @Column
     private String note;
-
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
     private List<Game_image> images = new ArrayList<>();
@@ -73,4 +73,6 @@ public class Game {
     @JsonManagedReference
     private List<Feedback> feedbackList;
 
+    @ManyToMany(mappedBy = "games")
+    private Set<Wishlist> wishLists = new HashSet<>();
 }

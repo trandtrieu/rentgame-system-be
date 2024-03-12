@@ -46,5 +46,8 @@ public class Account {
 
     @Column
     private long account_balance;
+
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Wishlist wishList;
 }
 

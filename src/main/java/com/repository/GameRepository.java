@@ -31,6 +31,23 @@ public interface GameRepository extends PagingAndSortingRepository<Game, Long> {
             "CASE WHEN :sortType = 'asc' THEN g.price END ASC")
     Page<Game> searchAndFilter(String keyword, List<Long> categoryIds, List<Long> platformIds, String sortType, Pageable pageable);
 
+
+    @Query("SELECT g FROM Game g " +
+            "LEFT JOIN g.categories c " +
+            "LEFT JOIN g.platforms p " +
+            "WHERE " +
+            "(COALESCE(:keyword, '') = '' OR " +
+            "g.name LIKE %:keyword% OR " +
+            "g.describe LIKE %:keyword%) AND " +
+            "(:categoryIds IS NULL OR c.id IN :categoryIds) AND " +
+            "(:platformIds IS NULL OR p.id IN :platformIds) AND " +
+            "(:minPrice IS NULL OR g.price >= :minPrice) AND " +
+            "(:maxPrice IS NULL OR g.price <= :maxPrice) " +
+            "ORDER BY CASE WHEN :sortType = 'desc' THEN g.price END DESC, " +
+            "CASE WHEN :sortType = 'asc' THEN g.price END ASC")
+    Page<Game> searchAndFilter2(String keyword, List<Long> categoryIds, List<Long> platformIds, String sortType, Double minPrice, Double maxPrice, Pageable pageable);
+
+
     Page<Game> findAllByOrderByPriceDesc(Pageable pageable);
 
     Page<Game> findAllByOrderByPriceAsc(Pageable pageable);

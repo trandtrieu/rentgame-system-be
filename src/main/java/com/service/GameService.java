@@ -42,7 +42,7 @@ public class GameService {
     }
 
 
-    public Page<GameDTO> searchAndFilterGames2(String keyword, List<Long> categoryIds, List<Long> platformIds, String sortType, Pageable pageable) {
+    public Page<GameDTO> searchAndFilterGames(String keyword, List<Long> categoryIds, List<Long> platformIds, String sortType, Pageable pageable) {
         if (sortType == null || sortType.isEmpty()) {
             sortType = "";
         }
@@ -50,17 +50,14 @@ public class GameService {
         return games.map(this::convertToDTO);
     }
 
-    public Page<Game> searchAndFilterGames(String keyword, List<Long> categoryIds, List<Long> platformIds, String sortType, Pageable pageable) {
-        Page<Game> games;
-        if ("desc".equals(sortType)) {
-            games = gameRepository.searchAndFilter(keyword, categoryIds, platformIds, sortType, pageable);
-        } else if ("asc".equals(sortType)) {
-            games = gameRepository.searchAndFilter(keyword, categoryIds, platformIds, sortType, pageable);
-        } else {
-            games = gameRepository.searchAndFilter(keyword, categoryIds, platformIds, sortType, pageable);
+    public Page<GameDTO> searchAndFilterGames2(String keyword, List<Long> categoryIds, List<Long> platformIds, String sortType, Double minPrice, Double maxPrice, Pageable pageable) {
+        if (sortType == null || sortType.isEmpty()) {
+            sortType = "";
         }
-        return games;
+        Page<Game> games = gameRepository.searchAndFilter2(keyword, categoryIds, platformIds, sortType, minPrice, maxPrice, pageable);
+        return games.map(this::convertToDTO);
     }
+
 
     private GameDTO convertToDTO(Game game) {
 

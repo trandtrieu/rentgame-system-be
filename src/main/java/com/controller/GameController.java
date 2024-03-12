@@ -54,13 +54,29 @@ public class GameController {
 
 
     @GetMapping("/search")
-    public Page<GameDTO> searchAndFilterGames2(
+    public Page<GameDTO> searchAndFilterGames(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) List<Long> categoryIds,
             @RequestParam(required = false) List<Long> platformIds,
             @RequestParam(required = false) String sortType,
             Pageable pageable) {
-        return gameService.searchAndFilterGames2(keyword, categoryIds, platformIds, sortType, pageable);
+        return gameService.searchAndFilterGames(keyword, categoryIds, platformIds, sortType, pageable);
+    }
+
+
+    @GetMapping("/search2")
+    public Page<GameDTO> searchAndFilterGames(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) List<Long> categoryIds,
+            @RequestParam(required = false) List<Long> platformIds,
+            @RequestParam(required = false) String sortType,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            Pageable pageable) {
+        if (sortType == null || sortType.isEmpty()) {
+            sortType = "";
+        }
+        return gameService.searchAndFilterGames2(keyword, categoryIds, platformIds, sortType, minPrice, maxPrice, pageable);
     }
 
 
