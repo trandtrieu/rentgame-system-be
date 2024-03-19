@@ -6,7 +6,10 @@ import com.repository.AccountRepository;
 import com.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,7 +18,7 @@ import java.util.stream.Collectors;
 public class AccountServiceImpl implements AccountService {
     @Autowired
     private AccountRepository accountRepository;
-
+    private final String FOLDER_PATH = "D:/Documents/OJT/mock-project/pharmacy-online-fe/public/assets/images";
     @Override
     public Account getAccount(Long accountId) {
         return accountRepository.findById(accountId)
@@ -35,9 +38,40 @@ public class AccountServiceImpl implements AccountService {
         accountDTO.setAvatar(account.getAvatar());
         accountDTO.setPhone(account.getPhone());
         accountDTO.setRoles(account.getRoles());
-
+        accountDTO.setAddress(account.getAddress());
         return accountDTO;
     }
+
+    @Override
+    public void updateAccountu(Long id, AccountDTO accountDTO) {
+        Account accountToUpdate = getAccount(id);
+
+        // Update account fields from the DTO
+        accountToUpdate.setName(accountDTO.getName());
+        accountToUpdate.setMail(accountDTO.getMail());
+        accountToUpdate.setAddress(accountDTO.getAddress());
+//        accountToUpdate.setUsername(accountDTO.getUsername());
+        accountToUpdate.setDob(accountDTO.getDob());
+//        accountToUpdate.setPassword(accountDTO.getPassword());
+        accountToUpdate.setAvatar(accountDTO.getAvatar());
+        accountToUpdate.setPhone(accountDTO.getPhone());
+//        accountToUpdate.setRoles(accountDTO.getRoles());
+        accountToUpdate.setAccount_balance(accountDTO.getAccount_balance());
+
+        // Save the updated account
+        accountRepository.save(accountToUpdate);
+    }
+
+
+    @Override
+    public void updateAccountImage(Long accountId, MultipartFile multipartFile) throws IOException {
+        String filePath = FOLDER_PATH + multipartFile.getOriginalFilename();
+        Account account = getAccount(accountId);
+        account.setAvatar(multipartFile.getOriginalFilename());
+        multipartFile.transferTo(new File(filePath));
+        accountRepository.save(account);
+    }
+
 
     @Override
     public List<AccountDTO> getListAccount() {

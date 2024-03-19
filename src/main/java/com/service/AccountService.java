@@ -2,7 +2,9 @@ package com.service;
 
 import com.dto.AccountDTO;
 import com.model.Account;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface AccountService {
@@ -14,5 +16,7 @@ public interface AccountService {
 
     AccountDTO getAccountById(Long accountId);
 
+    public void updateAccountu(Long accountId, AccountDTO accountDTO);
 
+    public void updateAccountImage(Long accountId, MultipartFile multipartFile) throws IOException;
 }
