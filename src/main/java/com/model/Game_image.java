@@ -20,6 +20,10 @@ public class Game_image {
     @Column
     private String imageUrl;
 
+    @Column
+    private int type;
+    // style 6x9: type 0, landscape: type 1
+
     @ManyToOne
     @JoinColumn(name = "game_id")
     private Game game;

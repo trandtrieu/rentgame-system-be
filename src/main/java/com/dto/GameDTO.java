@@ -22,6 +22,7 @@ public class GameDTO {
     private String note;
     private double rating;
     private List<String> imageUrls;
+    private List<Integer> imageTypes;
     private List<String> videoUrls;
     private List<String> categories;
     private List<String> platforms;

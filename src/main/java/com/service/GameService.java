@@ -79,6 +79,10 @@ public class GameService {
                 .map(Game_image::getImageUrl)
                 .toList();
         gameDTO.setImageUrls(imageUrls);
+        List<Integer> imageTypes = gameImages.stream()
+                .map(Game_image::getType)
+                .toList();
+        gameDTO.setImageTypes(imageTypes);
         List<Game_video> gameVideos = gameVideoRepository.findByGame(game);
         List<String> videoUrls = gameVideos.stream()
                 .map(Game_video::getVideoUrl)
