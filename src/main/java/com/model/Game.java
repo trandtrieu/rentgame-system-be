@@ -41,7 +41,7 @@ public class Game {
     private String ageLimit;
 
     @Column
-    private String stock;
+    private long stock;
 
     @Column
     private String note;
@@ -75,4 +75,7 @@ public class Game {
 
     @ManyToMany(mappedBy = "games")
     private Set<Wishlist> wishLists = new HashSet<>();
+
+    @ManyToMany(mappedBy = "games")
+    private Set<Nick> users = new HashSet<>();
 }

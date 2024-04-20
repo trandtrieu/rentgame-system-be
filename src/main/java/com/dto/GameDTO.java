@@ -18,7 +18,7 @@ public class GameDTO {
     private String describe;
     private Double price;
     private String ageLimit;
-    private String stock;
+    private long stock;
     private String note;
     private double rating;
     private List<String> imageUrls;

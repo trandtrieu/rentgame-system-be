@@ -13,24 +13,9 @@ public interface GameRepository extends PagingAndSortingRepository<Game, Long> {
 
     Optional<Game> findById(long gameId);
 
+    Game save(Game game);
 
     List<Game> findAll();
-
-
-//    @Query("SELECT g FROM Game g " +
-//            "LEFT JOIN g.categories c " +
-//            "LEFT JOIN g.platforms p " +
-//            "WHERE " +
-//            "(COALESCE(:keyword, '') = '' OR " +
-//            "g.name LIKE %:keyword% OR " +
-//            "g.describe LIKE %:keyword%) AND " +
-//
-//            "(:categoryIds IS NULL OR c.id IN :categoryIds) AND " +
-//            "(:platformIds IS NULL OR p.id IN :platformIds) " +
-//            "ORDER BY CASE WHEN :sortType = 'desc' THEN g.price END DESC, " +
-//            "CASE WHEN :sortType = 'asc' THEN g.price END ASC")
-//    Page<Game> searchAndFilter(String keyword, List<Long> categoryIds, List<Long> platformIds, String sortType, Pageable pageable);
-
 
     @Query("SELECT g " +
             "FROM Game g " +
