@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "rental")
@@ -27,11 +28,11 @@ public class Rental {
     @JoinColumn(name = "game_id")
     private Game game;
 
-    @Column(name = "rental_date")
-    private LocalDate rentalDate;
+    @Column(name = "rental_start")
+    private LocalDateTime rentalStart;
 
-    @Column(name = "return_date")
-    private LocalDate returnDate;
+    @Column(name = "rental_end")
+    private LocalDateTime rentalEnd;
 
     @Column
     private String status;

@@ -45,7 +45,7 @@ public class Account {
     private String roles;
 
     @Column
-    private long account_balance;
+    private Double balance;
 
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Wishlist wishList;

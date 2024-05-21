@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,8 +37,16 @@ public class Nick {
     private String note;
 
     @Column
-    private int status;
+    private String status;
 
+    @Column
+    private Long rentedBy;
+
+    @Column(name = "rental_start")
+    private LocalDateTime rentalStart;
+
+    @Column(name = "rental_end")
+    private LocalDateTime rentalEnd;
 
     @ManyToMany
     @JoinTable(
@@ -51,5 +60,8 @@ public class Nick {
     @OneToMany(mappedBy = "nick")
     private Set<Rental> rentals = new HashSet<>();
 
-
+    public Rental getRental() {
+        // Trả về rental đầu tiên nếu tồn tại, hoặc null nếu không có rental nào
+        return rentals.isEmpty() ? null : rentals.iterator().next();
+    }
 }

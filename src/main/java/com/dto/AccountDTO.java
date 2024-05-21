@@ -30,6 +30,6 @@ public class AccountDTO {
     private String roles;
 
     private int status;
-    private long account_balance;
+    private Double balance;
 
 }

@@ -49,7 +49,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         account.setMail(signUpDTO.getMail());
         account.setRoles("USER");
         account.setAvatar("user.jpg");
-        account.setAccount_balance(0);
+        account.setBalance((double) 0);
 
 
         account.setPassword(encoder.encode(signUpDTO.getPassword()));

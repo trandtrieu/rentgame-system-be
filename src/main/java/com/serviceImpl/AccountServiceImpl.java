@@ -52,7 +52,7 @@ public class AccountServiceImpl implements AccountService {
             accountDTO.setAvatar(account.getAvatar());
             accountDTO.setPhone(account.getPhone());
             accountDTO.setRoles(account.getRoles());
-            accountDTO.setAccount_balance(account.getAccount_balance());
+            accountDTO.setBalance(account.getBalance());
             return accountDTO;
         }).collect(Collectors.toList());
     }
@@ -62,7 +62,7 @@ public class AccountServiceImpl implements AccountService {
         List<Account> accountList = accountRepository.findAll();
 
         return accountList.stream()
-                .sorted(Comparator.comparing(Account::getAccount_balance).reversed())
+                .sorted(Comparator.comparing(Account::getBalance).reversed())
                 .limit(3)
                 .map(account -> {
                     AccountDTO accountDTO = new AccountDTO();
@@ -74,7 +74,7 @@ public class AccountServiceImpl implements AccountService {
                     accountDTO.setAvatar(account.getAvatar());
                     accountDTO.setPhone(account.getPhone());
                     accountDTO.setRoles(account.getRoles());
-                    accountDTO.setAccount_balance(account.getAccount_balance());
+                    accountDTO.setBalance(account.getBalance());
                     return accountDTO;
                 })
                 .collect(Collectors.toList());

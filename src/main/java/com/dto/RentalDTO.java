@@ -18,8 +18,7 @@ public class RentalDTO {
     private String gameName;
     private LocalDate rentalDate;
     private LocalDate returnDate;
-
     private String status;
-
-
+    private String username;
+    private String password;
 }
