@@ -42,6 +42,7 @@ public class Nick {
     @Column
     private Long rentedBy;
 
+
     @Column(name = "rental_start")
     private LocalDateTime rentalStart;
 

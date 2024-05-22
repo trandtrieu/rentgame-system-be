@@ -14,5 +14,6 @@ public interface AccountService {
 
     AccountDTO getAccountById(Long accountId);
 
+    AccountDTO updateAccount(Long accountId, AccountDTO accountDTO);
 
 }

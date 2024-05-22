@@ -96,7 +96,7 @@ public class AuthController {
 	public ResponseEntity<String> forgotPassword(@RequestParam String mail) {
 		return new ResponseEntity<String>(customUserDetailsService.forgotPassword(mail), HttpStatus.OK);
 	}
-	
+
 
 	@PutMapping("/set-password")
 	public ResponseEntity<String> setPassword(@RequestParam String mail, @RequestHeader String newPassword) {

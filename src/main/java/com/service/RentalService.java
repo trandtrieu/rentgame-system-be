@@ -1,11 +1,10 @@
 package com.service;
 
+import com.dto.GameDTO;
+import com.dto.NickDTO;
 import com.dto.RentalDTO;
 import com.exception.*;
-import com.model.Account;
-import com.model.Game;
-import com.model.Nick;
-import com.model.Rental;
+import com.model.*;
 import com.repository.AccountRepository;
 import com.repository.GameRepository;
 import com.repository.NickRepository;
@@ -16,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -157,6 +157,67 @@ public class RentalService {
         rentalRepository.save(rental);
 
         return rental;}
+
+
+    @Transactional
+    public void returnAccount(long rentalId) {
+        Rental rental = rentalRepository.findById(rentalId)
+                .orElseThrow(() -> new RentalNotFoundException("Rental not found"));
+        rental.setRentalEnd(LocalDate.now().atStartOfDay());
+        rentalRepository.save(rental);
+
+        Game game = rental.getGame();
+        game.setStock(game.getStock() + 1);
+        gameRepository.save(game);
+    }
+    public List<NickDTO> getRentedAccountsByUser(long userId) {
+        updateExpiredRentals();
+
+        List<Nick> rentedAccounts = nickRepository.findByRentedBy(userId);
+        return rentedAccounts.stream()
+                .map(this::convertToNickDTO)
+                .collect(Collectors.toList());
+    }
+
+    private NickDTO convertToNickDTO(Nick nick) {
+        NickDTO nickDTO = new NickDTO();
+        nickDTO.setId(nick.getId());
+        nickDTO.setUsername(nick.getUsername());
+        nickDTO.setPassword(nick.getPassword());
+        nickDTO.setEmail(nick.getEmail());
+        nickDTO.setPhone(nick.getPhone());
+        nickDTO.setNote(nick.getNote());
+        nickDTO.setStatus(nick.getStatus());
+        nickDTO.setRentedBy(nick.getRentedBy());
+        nickDTO.setReturnDate(nick.getRentalEnd());
+        nickDTO.setRentalDate(nick.getRentalStart());
+        // Tính toán thời gian còn lại
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime rentalEnd = nick.getRentalEnd();
+        if (rentalEnd != null) {
+            long remainingTime = Duration.between(now, rentalEnd).getSeconds();
+            nickDTO.setRemainingTime(remainingTime);
+        } else {
+            nickDTO.setRemainingTime(0); // Hoặc giá trị phù hợp khác
+        }
+        List<GameDTO> games = nick.getGames().stream()
+                .map(this::convertToGameDTO)
+                .collect(Collectors.toList());
+        nickDTO.setGames(games);
+        return nickDTO;
+    }
+    private void updateExpiredRentals() {
+        LocalDateTime now = LocalDateTime.now();
+        List<Nick> expiredRentals = nickRepository.findByRentalEndBefore(now);
+
+        for (Nick nick : expiredRentals) {
+            nick.setStatus("Available");
+            nick.setRentedBy(null);
+            nick.setRentalStart(null);
+            nick.setRentalEnd(null);
+            nickRepository.save(nick);
+        }
+    }
     private RentalDTO convertToRentalDTO(Rental rental) {
         RentalDTO rentalDTO = new RentalDTO();
         rentalDTO.setId(rental.getId());
@@ -170,22 +231,14 @@ public class RentalService {
         return rentalDTO;
     }
 
-    @Transactional
-    public void returnAccount(long rentalId) {
-        Rental rental = rentalRepository.findById(rentalId)
-                .orElseThrow(() -> new RentalNotFoundException("Rental not found"));
-        rental.setRentalEnd(LocalDate.now().atStartOfDay());
-        rentalRepository.save(rental);
-
-        Game game = rental.getGame();
-        game.setStock(game.getStock() + 1);
-        gameRepository.save(game);
-    }
-
-    public List<RentalDTO> getRentedAccountsByUser(long userId) {
-        List<Rental> rentals = rentalRepository.findByNickId(userId);
-        return rentals.stream()
-                .map(this::convertToRentalDTO)
+    private GameDTO convertToGameDTO(Game game) {
+        GameDTO gameDTO = new GameDTO();
+        gameDTO.setId(game.getId());
+        gameDTO.setName(game.getName());
+        List<String> platforms = game.getPlatforms().stream()
+                .map(Platform::getName)
                 .collect(Collectors.toList());
+        gameDTO.setPlatforms(platforms);
+        return gameDTO;
     }
 }

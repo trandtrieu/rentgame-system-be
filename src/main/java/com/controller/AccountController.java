@@ -24,4 +24,10 @@ public class AccountController {
     public ResponseEntity<List<AccountDTO>> getTop3Account_Balance() {
         return ResponseEntity.ok(accountService.getTop3AccountsByBalance());
     }
+
+
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<AccountDTO> updateAccount(@PathVariable Long id, @RequestBody AccountDTO accountDTO) {
+        return ResponseEntity.ok(accountService.updateAccount(id, accountDTO));
+    }
 }

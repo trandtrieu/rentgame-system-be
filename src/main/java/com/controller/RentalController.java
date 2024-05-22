@@ -1,16 +1,19 @@
 package com.controller;
 
+import com.dto.NickDTO;
 import com.dto.RentalDTO;
 import com.exception.GameNotFoundException;
 import com.exception.OutOfStockException;
 import com.exception.RentalNotFoundException;
 import com.exception.UserNotFoundException;
+import com.model.Nick;
 import com.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -44,12 +47,10 @@ public class RentalController {
         }
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<RentalDTO>> getRentedGamesByUser(@PathVariable long userId) {
-        List<RentalDTO> rentedGames = rentalService.getRentedAccountsByUser(userId);
-        if (rentedGames.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(rentedGames, HttpStatus.OK);
+
+    @GetMapping("/user/{userId}/rented-accounts")
+    public ResponseEntity<List<NickDTO>> getRentedAccountsByUser(@PathVariable long userId) {
+        List<NickDTO> rentedAccounts = rentalService.getRentedAccountsByUser(userId);
+        return new ResponseEntity<>(rentedAccounts, HttpStatus.OK);
     }
 }
