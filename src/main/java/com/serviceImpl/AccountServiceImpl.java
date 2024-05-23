@@ -5,14 +5,12 @@ import com.model.Account;
 import com.repository.AccountRepository;
 import com.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,6 +32,7 @@ public class AccountServiceImpl implements AccountService {
         accountDTO.setBalance(account.getBalance());
         return accountDTO;
     }
+
     private Account mapToEntity(AccountDTO accountDTO) {
         Account account = new Account();
         account.setId(accountDTO.getId());
@@ -48,6 +47,7 @@ public class AccountServiceImpl implements AccountService {
         account.setBalance(accountDTO.getBalance());
         return account;
     }
+
     @Override
     public Account getAccount(Long accountId) {
         return accountRepository.findById(accountId)
@@ -91,5 +91,37 @@ public class AccountServiceImpl implements AccountService {
 
         Account updatedAccount = accountRepository.save(existingAccount);
         return mapToDTO(updatedAccount);
+    }
+
+    @Override
+    public Optional<Account> findAccountById(Long accountId) {
+        return accountRepository.findById(accountId);
+    }
+
+    @Override
+    public void updateAccountBalance(Long accountId, double amount) {
+        Optional<Account> accountOptional = accountRepository.findById(accountId);
+        if (accountOptional.isPresent()) {
+            Account account = accountOptional.get();
+            account.setBalance(account.getBalance() + amount);
+            accountRepository.save(account);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void saveOrUpdate(Account account) {
+        // Kiểm tra xem tài khoản đã tồn tại trong cơ sở dữ liệu chưa
+        Optional<Account> optionalAccount = accountRepository.findById(account.getId());
+        if (optionalAccount.isPresent()) {
+            // Nếu tài khoản tồn tại, cập nhật nó
+            Account existingAccount = optionalAccount.get();
+            existingAccount.setName(account.getName());
+            existingAccount.setBalance(account.getBalance());
+            accountRepository.save(existingAccount);
+        } else {
+            // Nếu không, tạo một tài khoản mới
+            accountRepository.save(account);
+        }
     }
 }
