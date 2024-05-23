@@ -54,9 +54,12 @@ public class SecurityConfig {
                                 "/rent-game/game/feedback/**",
                                 "/rent-game/wishlist/**",
 
+
                                 "/rent-game/game/feedback/getFeedback/**",
                                 "/rent-game/game/reply/getByFeedbackId/**",
+                                "/**",
 
+                                "/payment/**",
                                 "/auth/forgot-password", "/auth/set-password").permitAll()
 
                         .anyRequest().authenticated())
