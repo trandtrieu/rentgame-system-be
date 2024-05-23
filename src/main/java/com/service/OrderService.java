@@ -20,4 +20,8 @@ public class OrderService {
     public Optional<Order> findOrderById(long id) {
         return orderRepository.findById(id);
     }
+
+    public Optional<Order> findByOrderCode(int orderCode) {
+        return orderRepository.findByOrderCode(orderCode);
+    }
 }

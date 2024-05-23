@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.Optional;
 
 @RestController
-//@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/rent-game/payment")
 public class PaymentController {
     private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
@@ -30,7 +30,7 @@ public class PaymentController {
     private final OrderService orderService;
 
     private static final String DESCRIPTION = "Ma giao dich thu nghiem";
-    private static final String RETURN_URL = "http://localhost:3000/profile";
+    private static final String RETURN_URL = "http://localhost:3000/success";
     private static final String CANCEL_URL = "http://localhost:3000/cancel";
 
     @Autowired
@@ -101,15 +101,28 @@ public class PaymentController {
                 return createErrorResponse("Amount must be positive");
             }
 
+            // Tạo mã đơn hàng
             String currentTimeString = String.valueOf(new Date().getTime());
             int orderCode = Integer.parseInt(currentTimeString.substring(currentTimeString.length() - 6));
 
+            // Tạo đối tượng đơn hàng
+            Order order = new Order();
+            order.setOrderCode(orderCode);
+            order.setAmount(amount);
+            order.setDescription(DESCRIPTION);
+            order.setStatus("Pending");
+            order.setAccount(optionalAccount.get());
+            order.setCreatedAt(new Date());
+
+            orderService.saveOrder(order);
+
             PaymentData paymentData = new PaymentData(orderCode, (int) amount, DESCRIPTION, null, CANCEL_URL, RETURN_URL);
             JsonNode data = payOS.createPaymentLink(paymentData);
-
             String checkoutUrl = getNodeText(data, "checkoutUrl");
+
             ObjectNode response = new ObjectMapper().createObjectNode();
             response.put("checkoutUrl", checkoutUrl);
+            response.put("orderCode", orderCode);
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -118,17 +131,70 @@ public class PaymentController {
         }
     }
 
+
     @GetMapping("/cancel")
-    public ResponseEntity<String> cancel() {
-        logger.info("Payment was cancelled.");
-        return ResponseEntity.ok("Payment was cancelled.");
+    public ResponseEntity<String> cancel(@RequestParam("orderCode") int orderCode) {
+
+        try {
+            Optional<Order> optionalOrder = orderService.findByOrderCode(orderCode);
+            if (optionalOrder.isPresent()) {
+                Order order = optionalOrder.get();
+
+                // Cập nhật trạng thái của đơn hàng thành "CANCELLED"
+                order.setStatus("CANCELLED");
+                orderService.saveOrder(order);
+
+                return ResponseEntity.ok("Order has been cancelled.");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order not found.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error.");
+        }
     }
 
+
     @GetMapping("/success")
-    public ResponseEntity<String> success() {
-        logger.info("Payment was successful!");
-        return ResponseEntity.ok("Payment was successful!");
+    public ResponseEntity<String> success(@RequestParam("status") String status,
+                                          @RequestParam("accountId") long accountId,
+                                          @RequestParam("orderCode") int orderCode) {
+
+        try {
+            if ("PAID".equals(status)) {
+                Optional<Order> optionalOrder = orderService.findByOrderCode(orderCode);
+                if (optionalOrder.isPresent()) {
+                    Order order = optionalOrder.get();
+
+                    // Check if the order status is already "PAID"
+                    if ("PAID".equals(order.getStatus())) {
+                        return ResponseEntity.ok("Order is already paid. No update needed.");
+                    }
+
+                    double amount = order.getAmount();
+
+                    Optional<Account> optionalAccount = accountService.findAccountById(accountId);
+                    if (optionalAccount.isPresent()) {
+                        Account account = optionalAccount.get();
+                        account.setBalance(account.getBalance() + amount);
+                        accountService.saveOrUpdate(account);
+                        order.setStatus("PAID");
+                        orderService.saveOrder(order);
+
+                        return ResponseEntity.ok("Payment was successful! Balance updated.");
+                    } else {
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found.");
+                    }
+                } else {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order not found.");
+                }
+            } else {
+                return ResponseEntity.ok("Payment was not successful.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error.");
+        }
     }
+
 
     private String getNodeText(JsonNode node, String fieldName) throws Exception {
         JsonNode field = node.get(fieldName);
