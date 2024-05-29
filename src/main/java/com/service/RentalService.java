@@ -9,17 +9,16 @@ import com.repository.AccountRepository;
 import com.repository.GameRepository;
 import com.repository.NickRepository;
 import com.repository.RentalRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -57,24 +56,19 @@ public class RentalService {
         if (game.getStock() <= 0) {
             throw new OutOfStockException("Game is out of stock");
         }
-        logger.info("pass stock");
         if (checkIfAccountIsInUseByAnotherUser(gameAccounts, userId)) {
             throw new GameAccountInUseException("Game account is currently in use by another user");
         }
-        logger.info("pass check acc was used");
 
         if (account.getBalance() < game.getPrice() * hours) {
             throw new InsufficientBalanceException("Insufficient balance to rent the game for specified hours");
         }
-        logger.info("pass check balance");
 
         RentalDTO rentalDTO;
         if (isAccountRentedByCurrentUser(gameAccounts, userId)) {
-            logger.info("hello extend");
 
             rentalDTO = extendRentalTimeForCurrentUser(gameAccounts, userId, hours);
         } else {
-            logger.info("hello rent new");
 
             rentalDTO = rentNewAccountForCurrentUser(account, gameAccounts, game, userId, hours);
         }
@@ -121,42 +115,33 @@ public class RentalService {
         selectedGameAccount.setRentalStart(LocalDateTime.now());
         selectedGameAccount.setRentalEnd(LocalDateTime.now().plusHours(hours));
         nickRepository.save(selectedGameAccount);
-
         // Deduct user's balance
         account.setBalance(account.getBalance() - game.getPrice() * hours);
+        Account accountId = account;
         accountRepository.save(account);
+        double totalAmount = game.getPrice() * hours;
 
-        // Create new rental
-        Rental rental = createRental(selectedGameAccount, game);
+        Rental rental = createRental(selectedGameAccount, game, totalAmount, accountId);
         logger.info("Gamerented successfully!");
         return convertToRentalDTO(rental);
     }
 
-    private Rental createRentalByHour(Nick user, Game game, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+
+    private Rental createRental(Nick user, Game game, double totalAmount, Account accountId) {
         game.setStock(game.getStock() - 1);
         gameRepository.save(game);
-
         Rental rental = new Rental();
         rental.setNick(user);
         rental.setGame(game);
-        rental.setRentalStart(startDateTime);
-        rental.setRentalEnd(endDateTime);
+        rental.setTotalAmount(totalAmount);
+        rental.setRentalStart(LocalDateTime.now());
+        rental.setRentalEnd(LocalDateTime.now());
+        rental.setAccount(accountId);
+
         rentalRepository.save(rental);
 
         return rental;
     }
-    private Rental createRental(Nick user, Game game) {
-        game.setStock(game.getStock() - 1);
-        gameRepository.save(game);
-        Rental rental = new Rental();
-        rental.setNick(user);
-        rental.setGame(game);
-        rental.setRentalStart(LocalDateTime.now());
-        rental.setRentalEnd(LocalDateTime.now());
-
-        rentalRepository.save(rental);
-
-        return rental;}
 
 
     @Transactional
@@ -170,6 +155,7 @@ public class RentalService {
         game.setStock(game.getStock() + 1);
         gameRepository.save(game);
     }
+
     public List<NickDTO> getRentedAccountsByUser(long userId) {
         updateExpiredRentals();
 
@@ -177,6 +163,14 @@ public class RentalService {
         return rentedAccounts.stream()
                 .map(this::convertToNickDTO)
                 .collect(Collectors.toList());
+    }
+
+    public List<RentalDTO> getRentalsByUser(long userId) {
+        List<Rental> rentals = rentalRepository.findByAccount_Id(userId);
+        if (rentals.isEmpty()) {
+            throw new UserNotFoundException("No rentals found for user with ID " + userId);
+        }
+        return rentals.stream().map(this::convertToRentalDTO).collect(Collectors.toList());
     }
 
     private NickDTO convertToNickDTO(Nick nick) {
@@ -206,6 +200,7 @@ public class RentalService {
         nickDTO.setGames(games);
         return nickDTO;
     }
+
     private void updateExpiredRentals() {
         LocalDateTime now = LocalDateTime.now();
         List<Nick> expiredRentals = nickRepository.findByRentalEndBefore(now);
@@ -218,16 +213,21 @@ public class RentalService {
             nickRepository.save(nick);
         }
     }
+
     private RentalDTO convertToRentalDTO(Rental rental) {
         RentalDTO rentalDTO = new RentalDTO();
         rentalDTO.setId(rental.getId());
         rentalDTO.setGameId(rental.getGame().getId());
         rentalDTO.setGameName(rental.getGame().getName());
+
+
         rentalDTO.setRentalDate(LocalDate.from(rental.getRentalStart()));
         rentalDTO.setReturnDate(LocalDate.from(rental.getRentalEnd()));
         rentalDTO.setStatus(rental.getStatus());
         rentalDTO.setUsername(rental.getNick().getUsername());
         rentalDTO.setPassword(rental.getNick().getPassword());
+        rentalDTO.setTotalAmount(rental.getTotalAmount());
+        rentalDTO.setAccountId(rental.getAccount().getId());
         return rentalDTO;
     }
 

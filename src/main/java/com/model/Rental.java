@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -36,6 +35,13 @@ public class Rental {
 
     @Column
     private String status;
+
+    @Column
+    private double totalAmount;
+
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+    private Account account;
 
 
     // Constructors, getters, setters

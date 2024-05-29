@@ -6,8 +6,7 @@ import com.exception.GameNotFoundException;
 import com.exception.OutOfStockException;
 import com.exception.RentalNotFoundException;
 import com.exception.UserNotFoundException;
-import com.model.Nick;
-import com.service.*;
+import com.service.RentalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +22,7 @@ public class RentalController {
 
     @Autowired
     private RentalService rentalService;
+
     @PostMapping("/rent")
     public ResponseEntity<?> rentGame(@RequestParam long userId, @RequestParam long gameId, @RequestParam int hours) {
         try {
@@ -52,5 +52,17 @@ public class RentalController {
     public ResponseEntity<List<NickDTO>> getRentedAccountsByUser(@PathVariable long userId) {
         List<NickDTO> rentedAccounts = rentalService.getRentedAccountsByUser(userId);
         return new ResponseEntity<>(rentedAccounts, HttpStatus.OK);
+    }
+
+    @GetMapping("/user/{userId}/rentals")
+    public ResponseEntity<List<RentalDTO>> getRentalsByUser(@PathVariable long userId) {
+        try {
+            List<RentalDTO> rentals = rentalService.getRentalsByUser(userId);
+            return ResponseEntity.ok(rentals);
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.emptyList());
+        }
     }
 }

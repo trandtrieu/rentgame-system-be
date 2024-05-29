@@ -21,4 +21,6 @@ public class RentalDTO {
     private String status;
     private String username;
     private String password;
+    private double totalAmount;
+    private long accountId;
 }

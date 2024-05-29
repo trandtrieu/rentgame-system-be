@@ -17,6 +17,7 @@ public class CorsConfig {
         config.setAllowCredentials(true);
         config.addAllowedOriginPattern("http://localhost:3000");
         config.addAllowedOriginPattern("http://localhost:3006");
+        config.addAllowedOriginPattern("https://rentgame-system-fe-wj3x.vercel.app");
 
         config.addAllowedHeader("Origin");
         config.addAllowedHeader("Content-Type");
